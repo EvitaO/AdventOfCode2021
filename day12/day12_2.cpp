@@ -52,10 +52,49 @@ bool		UpperCase(std::string str){
 	return true;
 }
 
+bool		lowerCase(std::string str){
+	for (int i = 0; i < str.size(); i++){
+		if (!islower(str[i]))
+			return false;
+	}
+	return true;	
+}
+
+bool		twosmall(std::string s, std::list<std::string> &lst){
+	std::map<std::string, int>		values;
+	if (!lowerCase(s))
+		return true;
+	for (std::string x : lst){
+		if (values.find(x) == values.end())
+			values.insert(std::pair<std::string, int>(x, 1));
+		else
+			values[x]++;
+	}
+	if (values.find(s) == values.end())
+		return true;
+	for (std::string x : lst){
+		if (values[x] > 1 && values.find(s) != values.end() && lowerCase(x))
+			return false;
+	}	
+	if (values[s] == 1)
+		return true;
+	return false;
+}
+
+bool		notinPaths(std::list<std::string> lst, std::vector<std::list<std::string> > &paths){
+	int check = 0;
+	for (int x = 0; x < paths.size(); x++){
+		if (lst == paths[x])
+			return false;
+	}
+	return true;
+}
+
 void		DFS(std::string key, std::map<std::string, std::list<std::string> > &nodes, std::vector<std::list<std::string> > &paths, std::list<std::string> lst)
 {
 	std::list<std::string> list = nodes[key];
-	for (std::string x : list){
+	for (auto it = list.begin(); it != list.end(); it++){
+		std::string x = *it;
 		if (x == "end"){
 			std::list<std::string> tmp = lst;
 			tmp.push_back(x);
@@ -63,6 +102,11 @@ void		DFS(std::string key, std::map<std::string, std::list<std::string> > &nodes
 			i++;
 		}
 		else if (std::find(lst.begin(), lst.end(), x) == lst.end() || UpperCase(x)){
+			std::list<std::string> tmp = lst;
+			tmp.push_back(x);
+			DFS(x, nodes, paths, tmp);
+		}
+		else if (twosmall(x, lst)){
 			std::list<std::string> tmp = lst;
 			tmp.push_back(x);
 			DFS(x, nodes, paths, tmp);
