@@ -97,6 +97,8 @@ unsigned long long     literalValue(std::string &str){
     }
     lv += str.substr(1, 4);
     str.erase(0,5);
+
+    // std::cout << toBinary(lv) << std::endl;
     return toBinary(lv);
 }
 
@@ -158,42 +160,44 @@ unsigned long long    processID(std::vector<unsigned long long>  res, int id){
 
 }
 
-unsigned long long    process(std::string &line){
-    // version += std::stoi(line.substr(0,3).c_str(), 0, 2);
+void    process(std::string &line){
+    version += std::stoi(line.substr(0,3).c_str(), 0, 2);
     line.erase(0, 3);
     int id = std::stoi(line.substr(0,3).c_str(), 0, 2);
     line.erase(0, 3);
-    if (id == 4)
-        return literalValue(line);
+    if (id == 4){
+        result = literalValue(line);
+        return ;
+    }
     else {
         int length_id = openPackets(line);
         std::vector<unsigned long long>    res;
         if (length_id < 0){
-            length_id = length_id * -1;
-            while (length_id > 0){
-                res.push_back(process(line));
-                length_id--;
+            while (length_id < 0){
+                process(line);
+                res.push_back(result);
+                length_id++;
             }
         }
         else{
             int tmp = line.size();
             while(length_id > 0){
-                res.push_back(process(line));
+                process(line);
+                res.push_back(result);
                 length_id -= (tmp - line.size());
+                tmp = line.size();
             }
         }
         result = processID(res, id);
-        return result;
-    }
-    // if (!line.empty() && !onlyzero(line))
-    //     process(line);
+        return ;
+    }    
 }
 
 int     main(int argc, char **argv){
     std::string         line;
     readfile(argv[1], line);
     convertString(line);
-    // process(line);
-    std::cout << process(line) << std::endl;
+    process(line);
+    std::cout << version << std::endl;
     std::cout << result << std::endl;
 }
