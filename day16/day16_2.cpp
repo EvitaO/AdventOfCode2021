@@ -117,11 +117,9 @@ unsigned long long    processID(std::vector<unsigned long long>  res, int id){
         return sum;
     }
     else if (id == 1){
-        for (auto i : res){
-            if (sum == 0)
-                sum = i;
-            else
-                sum = sum * i;
+        sum = res[0];
+        for (int i = 1; i < res.size(); i++){
+            sum *= res[i];
         }
         return sum;
     }
