@@ -71,18 +71,18 @@ void    convertString(std::string &line){
     line = bit;
 }
 
-unsigned long long   toBinary(std::string str){
+unsigned long long   convertBinary(std::string str){
     return strtoull(str.c_str(), NULL, 2);
 }
 
 int    openPackets(std::string &line){
     int x;
     if (line[0] == '0'){
-        x = toBinary(line.substr(1,15).c_str());
+        x = convertBinary(line.substr(1,15).c_str());
         line.erase(0,16);
     }
     else if (line[0] == '1'){
-        x = toBinary(line.substr(1,11).c_str()) * -1;
+        x = convertBinary(line.substr(1,11).c_str()) * -1;
         line.erase(0,12);
     }
     return x;
@@ -98,8 +98,7 @@ unsigned long long     literalValue(std::string &str){
     lv += str.substr(1, 4);
     str.erase(0,5);
 
-    // std::cout << toBinary(lv) << std::endl;
-    return toBinary(lv);
+    return convertBinary(lv);
 }
 
 bool    onlyzero(std::string line){
@@ -157,7 +156,6 @@ unsigned long long    processID(std::vector<unsigned long long>  res, int id){
             return 1;
         return 0;
     }
-
 }
 
 void    process(std::string &line){
@@ -167,7 +165,7 @@ void    process(std::string &line){
     line.erase(0, 3);
     if (id == 4){
         result = literalValue(line);
-        return ;
+        // return ;
     }
     else {
         int length_id = openPackets(line);
@@ -181,15 +179,19 @@ void    process(std::string &line){
         }
         else{
             int tmp = line.size();
+            std::cout << length_id << "=" << std::endl;
+            int test = 0;
             while(length_id > 0){
                 process(line);
                 res.push_back(result);
                 length_id -= (tmp - line.size());
+                test += tmp - line.size();
                 tmp = line.size();
             }
+            std::cout << test << "?" << std::endl;
         }
         result = processID(res, id);
-        return ;
+        // return ;
     }    
 }
 
